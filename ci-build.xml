@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Storee-CI" default="war" basedir=".">
+    <!-- ========== Properties ========= -->
+    <property name="src.dir"        value="src/java"/>
+    <property name="web.dir"        value="web"/>
+    <property name="build.dir"      value="build"/>
+    <property name="classes.dir"    value="${build.dir}/classes"/>
+    <property name="dist.dir"       value="dist"/>
+    <property name="war.file"       value="${dist.dir}/Storee.war"/>
+
+    <!-- ===== Path to dependency jars (WEB-INF/lib) ===== -->
+    <path id="compile.classpath">
+        <fileset dir="${web.dir}/WEB-INF/lib" includes="**/*.jar"/>
+    </path>
+
+    <!-- ========== Targets ========== -->
+    <target name="clean">
+        <delete dir="${build.dir}"/>
+        <delete dir="${dist.dir}"/>
+    </target>
+
+    <target name="compile" depends="clean">
+        <mkdir dir="${classes.dir}"/>
+        <javac includeantruntime="false"
+               srcdir="${src.dir}"
+               destdir="${classes.dir}"
+               encoding="UTF-8">
+            <classpath refid="compile.classpath"/>
+        </javac>
+    </target>
+
+    <target name="war" depends="compile">
+        <mkdir dir="${dist.dir}"/>
+        <war destfile="${war.file}" webxml="${web.dir}/WEB-INF/web.xml">
+            <!-- Add web resources except web.xml (already specified) -->
+            <fileset dir="${web.dir}" excludes="WEB-INF/web.xml"/>
+            <!-- Include dependency jars inside WEB-INF/lib -->
+            <lib dir="${web.dir}/WEB-INF/lib"/>
+            <!-- Compiled classes -->
+            <classes dir="${classes.dir}"/>
+        </war>
+    </target>
+</project> 
