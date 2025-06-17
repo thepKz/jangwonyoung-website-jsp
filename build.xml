@@ -10,6 +10,12 @@
 <project name="Storee" default="default" basedir=".">
     <description>Builds, tests, and runs the project Storee.</description>
     <import file="nbproject/build-impl.xml"/>
+    
+    <!-- Fix for missing -init-taskdefs target -->
+    <target name="-init-taskdefs">
+        <!-- Empty target to satisfy dependency in build-impl.xml -->
+    </target>
+    
     <target name="war" depends="compile">
         <war destfile="dist/Storee.war" basedir="${build.classes.dir}">
             <webxml file="web/WEB-INF/web.xml"/>
