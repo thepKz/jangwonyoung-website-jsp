@@ -16,6 +16,19 @@
         <!-- Empty target to satisfy dependency in build-impl.xml -->
     </target>
     
+    <!-- Override library-inclusion-in-archive to fix copyfiles task issue -->
+    <target depends="init" name="library-inclusion-in-archive" unless="dist.ear.dir">
+        <mkdir dir="${build.web.dir}/WEB-INF/lib"/>
+        <!-- Copy MSSQL JDBC JAR -->
+        <copy file="${file.reference.mssql-jdbc-9.4.1.jre8.jar}" 
+              todir="${build.web.dir}/WEB-INF/lib" 
+              failonerror="false"/>
+        <!-- Copy JSTL library JARs -->
+        <copy todir="${build.web.dir}/WEB-INF/lib" failonerror="false">
+            <fileset dir="${basedir}" includes="${libs.jstl.classpath}" erroronmissingdir="false"/>
+        </copy>
+    </target>
+    
     <target name="war" depends="compile">
         <war destfile="dist/Storee.war" basedir="${build.classes.dir}">
             <webxml file="web/WEB-INF/web.xml"/>
