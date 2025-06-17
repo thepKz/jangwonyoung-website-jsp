@@ -58,9 +58,13 @@
         <!-- Dependencies will be downloaded before compilation starts -->
     </target>
     
-    <target name="war" depends="compile">
-        <war destfile="dist/Storee.war" basedir="${build.classes.dir}">
-            <webxml file="web/WEB-INF/web.xml"/>
+    <!-- Override WAR target to use correct syntax -->
+    <target name="war" depends="compile,library-inclusion-in-archive">
+        <mkdir dir="dist"/>
+        <war destfile="dist/Storee.war" 
+             webxml="${build.web.dir}/WEB-INF/web.xml"
+             basedir="${build.web.dir}">
+            <!-- Web content is already copied to build.web.dir by NetBeans -->
         </war>
     </target>
     <!--
