@@ -12,39 +12,41 @@
     <import file="nbproject/build-impl.xml"/>
     
     <!-- Fix for missing -init-taskdefs target -->
-    <target name="-init-taskdefs"/>
+    <target name="-init-taskdefs">
+        <!-- Empty target to satisfy dependency -->
+    </target>
     
-    <!-- Download servlet-api dependency -->
+    <!-- Download dependencies target -->
     <target name="download-dependencies">
         <mkdir dir="lib"/>
         <get src="https://repo1.maven.org/maven2/javax/servlet/javax.servlet-api/4.0.1/javax.servlet-api-4.0.1.jar" 
              dest="lib/servlet-api.jar" 
              skipexisting="true"/>
-        <get src="https://repo1.maven.org/maven2/javax/servlet/jsp/jsp-api/2.2/jsp-api-2.2.jar"
-             dest="lib/jsp-api.jar"
+        <get src="https://repo1.maven.org/maven2/javax/servlet/jsp/jsp-api/2.2/jsp-api-2.2.jar" 
+             dest="lib/jsp-api.jar" 
              skipexisting="true"/>
     </target>
     
-    <!-- Override library-inclusion-in-archive to use standard copy -->
+    <!-- Override library-inclusion-in-archive to copy dependencies -->
     <target name="library-inclusion-in-archive" depends="download-dependencies">
         <mkdir dir="${build.web.dir}/WEB-INF/lib"/>
-        <copy todir="${build.web.dir}/WEB-INF/lib" failonerror="false" erroronmissingdir="false">
+        <!-- Copy all JAR files from lib directory -->
+        <copy todir="${build.web.dir}/WEB-INF/lib" failonerror="false">
             <fileset dir="lib" includes="*.jar" erroronmissingdir="false"/>
         </copy>
-        <!-- Copy MSSQL JDBC driver (local path corrected) -->
+        <!-- Copy sqljdbc4.jar if exists -->
         <copy file="sqljdbc4.jar" todir="${build.web.dir}/WEB-INF/lib" failonerror="false"/>
     </target>
     
-    <!-- Override compile classpath to include servlet-api -->
+    <!-- Override compile classpath to include servlet API -->
     <target name="-pre-compile" depends="download-dependencies">
-        <path id="compile.classpath">
-            <fileset dir="lib" includes="*.jar" erroronmissingdir="false"/>
-            <fileset file="sqljdbc4.jar"/>
+        <path id="cp">
+            <pathelement location="lib/servlet-api.jar"/>
+            <pathelement location="lib/jsp-api.jar"/>
+            <pathelement location="sqljdbc4.jar"/>
         </path>
+        <property name="javac.classpath" refid="cp"/>
     </target>
-    
-    <!-- Override javac.classpath -->
-    <property name="javac.classpath" value="lib/servlet-api.jar:lib/jsp-api.jar:sqljdbc4.jar"/>
     
     <target name="war" depends="compile">
         <war destfile="dist/Storee.war" basedir="${build.classes.dir}">
